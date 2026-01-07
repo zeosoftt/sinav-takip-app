@@ -1,12 +1,12 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/Button'
 import { subscriptionPlans } from '@/lib/constants'
-import { CreditCard, Lock } from 'lucide-react'
+import { Lock } from 'lucide-react'
 
-export default function PaymentPage() {
+function PaymentForm() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const planId = searchParams.get('plan') || 'monthly'
@@ -168,5 +168,19 @@ export default function PaymentPage() {
         </form>
       </div>
     </div>
+  )
+}
+
+export default function PaymentPage() {
+  return (
+    <Suspense fallback={
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="text-center">
+          <p className="text-gray-600">Yükleniyor...</p>
+        </div>
+      </div>
+    }>
+      <PaymentForm />
+    </Suspense>
   )
 }
