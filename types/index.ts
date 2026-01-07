@@ -1,6 +1,7 @@
-import { UserRole, ExamType, SubscriptionStatus } from '@prisma/client'
-
-export type { UserRole, ExamType, SubscriptionStatus }
+// SQLite doesn't support enums, so we define them as string literal types
+export type UserRole = 'ADMIN' | 'PREMIUM_USER' | 'FREE_USER' | 'INSTITUTION_ADMIN'
+export type ExamType = 'KPSS' | 'ALES' | 'YDS' | 'YKS' | 'DGS' | 'TUS' | 'STS' | 'EKPSS' | 'MEMUR_SINAVI' | 'OTHER'
+export type SubscriptionStatus = 'ACTIVE' | 'CANCELLED' | 'EXPIRED' | 'TRIAL'
 
 export interface User {
   id: string
