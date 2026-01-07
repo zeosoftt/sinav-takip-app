@@ -3,7 +3,7 @@ import type { NextRequest } from 'next/server'
 
 export function middleware(request: NextRequest) {
   // Protected routes
-  const protectedPaths = ['/dashboard', '/subscription', '/notifications', '/institutions/dashboard']
+  const protectedPaths = ['/dashboard', '/subscription', '/notifications', '/study', '/institutions/dashboard']
   const adminPaths = ['/admin']
   const authPaths = ['/auth/login', '/auth/register', '/institutions/login', '/institutions/register']
   
@@ -43,6 +43,7 @@ export const config = {
     '/dashboard/:path*',
     '/subscription/:path*',
     '/notifications/:path*',
+    '/study/:path*',
     '/auth/:path*',
     '/admin/:path*',
     '/institutions/:path*',

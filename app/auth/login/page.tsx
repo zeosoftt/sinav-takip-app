@@ -1,12 +1,13 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/Button'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -32,8 +33,9 @@ export default function LoginPage() {
         return
       }
 
-      // Başarılı giriş - dashboard'a yönlendir
-      router.push('/dashboard')
+      // Başarılı giriş - redirect parametresine veya dashboard'a yönlendir
+      const redirect = searchParams.get('redirect') || '/dashboard'
+      router.push(redirect)
       router.refresh()
     } catch (err) {
       setError('Bir hata oluştu. Lütfen tekrar deneyin.')
@@ -130,5 +132,17 @@ export default function LoginPage() {
         </form>
       </div>
     </div>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-slate-600 dark:text-dark-muted font-mono">Yükleniyor...</p>
+      </div>
+    }>
+      <LoginForm />
+    </Suspense>
   )
 }
