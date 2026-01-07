@@ -66,8 +66,16 @@ export async function POST(request: NextRequest) {
     return response
   } catch (error) {
     console.error('Login error:', error)
+    const errorMessage = error instanceof Error ? error.message : 'Bilinmeyen hata'
+    const errorStack = error instanceof Error ? error.stack : undefined
+    
+    // Production'da stack trace gösterme
     return NextResponse.json(
-      { error: 'Bir hata oluştu' },
+      { 
+        error: 'Bir hata oluştu',
+        message: process.env.NODE_ENV === 'development' ? errorMessage : undefined,
+        stack: process.env.NODE_ENV === 'development' ? errorStack : undefined
+      },
       { status: 500 }
     )
   }
