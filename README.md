@@ -39,3 +39,7 @@ npm run dev
 - `/lib` - Yardımcı fonksiyonlar ve utilities
 - `/prisma` - Database şeması
 - `/types` - TypeScript type tanımları
+
+## Deployment
+
+Uygulama Vercel'de otomatik olarak deploy edilir. Her `main` branch'e push yapıldığında otomatik deployment başlar.
