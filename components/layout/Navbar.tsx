@@ -4,10 +4,12 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { Button } from '@/components/ui/Button'
 import { UserMenu } from '@/components/auth/UserMenu'
-import { Menu, X } from 'lucide-react'
+import { PomodoroTimer } from '@/components/study/PomodoroTimer'
+import { Menu, X, Timer } from 'lucide-react'
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
+  const [isPomodoroOpen, setIsPomodoroOpen] = useState(false)
 
   return (
     <nav className="bg-white/80 dark:bg-dark-surface/80 backdrop-blur-md shadow-sm border-b border-slate-200 dark:border-dark-border sticky top-0 z-50">
@@ -30,6 +32,10 @@ export function Navbar() {
             </Link>
             <Link href="/about" className="text-slate-700 dark:text-dark-text hover:text-primary-600 dark:hover:text-primary-400 transition-colors font-medium">
               Hakkımızda
+            </Link>
+            <Link href="/study" className="flex items-center gap-2 text-slate-700 dark:text-dark-text hover:text-primary-600 dark:hover:text-primary-400 transition-colors font-medium" title="Pomodoro Sayacı">
+              <Timer className="w-5 h-5" />
+              <span>Pomodoro</span>
             </Link>
             <UserMenu />
           </div>
@@ -66,6 +72,13 @@ export function Navbar() {
               onClick={() => setIsOpen(false)}
             >
               Hakkımızda
+            </Link>
+            <Link
+              href="/study"
+              className="block px-4 py-2 text-slate-700 dark:text-dark-text hover:bg-slate-100 dark:hover:bg-slate-800 rounded-md transition-colors"
+              onClick={() => setIsOpen(false)}
+            >
+              Pomodoro
             </Link>
             <div className="px-4 space-y-2">
               <Link href="/auth/login" onClick={() => setIsOpen(false)}>
