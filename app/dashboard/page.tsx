@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/Button'
 import { ExamCard } from '@/components/exam/ExamCard'
+import { PomodoroTimer } from '@/components/study/PomodoroTimer'
+import { ExamCountdown } from '@/components/study/ExamCountdown'
 import { Calendar, Bell, TrendingUp, BookOpen } from 'lucide-react'
 import { Exam } from '@/types'
 
@@ -100,6 +102,12 @@ export default function DashboardPage() {
             <Bell className="w-8 h-8 text-primary-600 dark:text-primary-400" />
           </div>
         </div>
+      </div>
+
+      {/* Study Tools */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <ExamCountdown />
+        <PomodoroTimer />
       </div>
 
       {/* Quick Actions */}
