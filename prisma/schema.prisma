@@ -1,0 +1,165 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+// SQLite doesn't support enums, using String instead
+// UserRole: ADMIN, PREMIUM_USER, FREE_USER
+// SubscriptionStatus: ACTIVE, CANCELLED, EXPIRED, TRIAL
+// ExamType: KPSS, ALES, YDS, YKS, DGS, TUS, STS, EKPSS, MEMUR_SINAVI, OTHER
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  password      String
+  name          String
+  role          String    @default("FREE_USER") // ADMIN, PREMIUM_USER, FREE_USER, INSTITUTION_ADMIN
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  subscriptions Subscription[]
+  examTrackings ExamTracking[]
+  notifications Notification[]
+  institutions  Institution[] // Kurum sahibi olabilir
+}
+
+model Subscription {
+  id              String            @id @default(cuid())
+  userId          String
+  status          String            @default("TRIAL") // ACTIVE, CANCELLED, EXPIRED, TRIAL
+  planType        String            // "monthly", "yearly"
+  startDate       DateTime          @default(now())
+  endDate         DateTime
+  price           Float
+  paymentId       String?           @unique
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  
+  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+}
+
+model Exam {
+  id              String    @id @default(cuid())
+  name            String
+  type            String    // KPSS, ALES, YDS, YKS, DGS, TUS, STS, EKPSS, MEMUR_SINAVI, OTHER
+  description     String?
+  institution     String    // Kurum adÄ± (Ã–SYM, KPSS, vb.)
+  applicationStartDate DateTime
+  applicationEndDate   DateTime
+  examDate        DateTime
+  resultDate      DateTime?
+  fee             Float?
+  website         String?
+  isActive        Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  trackings       ExamTracking[]
+  studentTrackings StudentExamTracking[]
+  
+  @@unique([name, institution])
+  @@index([type])
+  @@index([examDate])
+}
+
+model ExamTracking {
+  id              String    @id @default(cuid())
+  userId            String
+  examId            String
+  isInterested      Boolean   @default(true)
+  applicationStatus String?   // "not_applied", "applied", "completed"
+  notes             String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  exam              Exam      @relation(fields: [examId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, examId])
+  @@index([userId])
+}
+
+model Notification {
+  id              String    @id @default(cuid())
+  userId          String
+  title           String
+  message         String
+  type            String    // "exam_reminder", "application_deadline", "result_announced"
+  isRead          Boolean   @default(false)
+  relatedExamId   String?
+  createdAt       DateTime  @default(now())
+  
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([isRead])
+}
+
+// Kurumsal Özellikler
+model Institution {
+  id              String    @id @default(cuid())
+  name            String
+  email           String    @unique
+  password        String
+  type            String    // "SCHOOL", "COACHING", "UNIVERSITY", "OTHER"
+  description     String?
+  website         String?
+  phone           String?
+  address         String?
+  isActive        Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  owner           User      @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  ownerId         String
+  students        Student[]
+  
+  @@index([ownerId])
+  @@index([email])
+}
+
+model Student {
+  id              String    @id @default(cuid())
+  institutionId   String
+  name            String
+  email           String?
+  phone           String?
+  studentNumber   String?   // Öğrenci numarası
+  notes           String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  institution     Institution @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  examTrackings   StudentExamTracking[]
+  
+  @@unique([institutionId, studentNumber])
+  @@index([institutionId])
+  @@index([email])
+}
+
+model StudentExamTracking {
+  id              String    @id @default(cuid())
+  studentId       String
+  examId          String
+  applicationStatus String?   // "not_applied", "applied", "completed", "passed", "failed"
+  score           Float?
+  notes           String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  student         Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  exam            Exam      @relation(fields: [examId], references: [id], onDelete: Cascade)
+  
+  @@unique([studentId, examId])
+  @@index([studentId])
+  @@index([examId])
+}
