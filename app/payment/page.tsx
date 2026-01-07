@@ -2,6 +2,12 @@ import { Suspense } from 'react'
 import PaymentForm from './PaymentForm'
 
 export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
+
+// Prevent static generation
+export function generateStaticParams() {
+  return []
+}
 
 export default function PaymentPage() {
   return (
